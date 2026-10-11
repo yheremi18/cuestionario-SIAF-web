@@ -169,13 +169,13 @@ if st.session_state.indice < total_preguntas:
     if st.session_state.respondido:
         st.write("")
         if st.session_state.seleccion == nombre_correcto:
-            st.success("¡Respuesta Correcta! ✔️")
+            st.success("¡Respuesta Correcta!")
         else:
-            st.error(f"Respuesta Incorrecta ❌. La respuesta correcta era: **{nombre_correcto}**")
+            st.error(f"Respuesta Incorrecta. La respuesta correcta era: **{nombre_correcto}**")
 
         st.info(f"**Descripción Oficial:**\n\n_{descripcion}_")
 
-        btn_label = "Siguiente Pregunta ➔" if st.session_state.indice + 1 < total_preguntas else "Ver Resultados 📊"
+        btn_label = "Siguiente Pregunta ->" if st.session_state.indice + 1 < total_preguntas else "Ver Resultados"
         if st.button(btn_label, type="primary"):
             st.session_state.indice += 1
             st.session_state.respondido = False
@@ -185,14 +185,14 @@ if st.session_state.indice < total_preguntas:
 # PANTALLA DE RESUMEN FINAL
 else:
     puntaje = len(st.session_state.aciertos)
-    st.markdown("<h2 style='text-align: center;'>🏆 Resumen Final del Cuestionario</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center;'>Resumen Final del Cuestionario</h2>", unsafe_allow_html=True)
     st.markdown(f"<h1 style='text-align: center; color: #dfa634;'>{puntaje} / {total_preguntas}</h1>", unsafe_allow_html=True)
     st.divider()
 
     col_a, col_b = st.columns(2)
 
     with col_a:
-        st.markdown("### ✅ Respuestas Correctas")
+        st.markdown("### Respuestas Correctas")
         if not st.session_state.aciertos:
             st.write("Ninguna.")
         else:
@@ -200,4 +200,14 @@ else:
                 st.write(f"• **[{cod}]** {TIPOS_OPERACION[cod][0]}")
 
     with col_b:
-        st.markdown("### ❌
+        st.markdown("### Respuestas Incorrectas")
+        if not st.session_state.errores:
+            st.write("¡Perfecto! Sin errores.")
+        else:
+            for cod in st.session_state.errores:
+                st.write(f"• **[{cod}]** {TIPOS_OPERACION[cod][0]}")
+
+    st.divider()
+    if st.button("Reiniciar Cuestionario", type="primary"):
+        reiniciar_juego()
+        st.rerun()
