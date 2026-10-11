@@ -25,48 +25,63 @@ TIPOS_OPERACION = {
 
 st.set_page_config(page_title="Cuestionario SIAF", page_icon="📝", layout="centered")
 
-# Estilos CSS corregidos por posición de bloque y columna
+# Estilos CSS con asignación directa por clase 'st-key' de Streamlit
 st.markdown("""
     <style>
-    .stApp { background-color: #291835; color: #ffffff; }
-    div[data-testid="stMarkdownContainer"] p { color: #ffffff; }
+    /* Fondo principal morado oscuro */
+    .stApp { 
+        background-color: #291835 !important; 
+    }
+    div[data-testid="stMarkdownContainer"] p { 
+        color: #ffffff !important; 
+    }
     
-    /* Estilo base para todos los botones de opciones */
-    div.stButton > button {
-        width: 100%;
-        height: 100px;
-        font-size: 15px !important;
+    /* Reglas generales para los botones de opciones */
+    .st-key-btn_0 button, .st-key-btn_1 button, .st-key-btn_2 button, .st-key-btn_3 button {
+        width: 100% !important;
+        height: 110px !important;
+        font-size: 16px !important;
         font-weight: bold !important;
-        border-radius: 12px !important;
-        color: white !important;
+        border-radius: 14px !important;
         border: none !important;
-        margin-bottom: 10px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3) !important;
+        transition: transform 0.1s ease, opacity 0.1s ease !important;
     }
-    
-    /* Asignar colores por ubicación en la grilla */
-    /* Fila 1 - Botón Azul */
-    div[data-testid="stHorizontalBlock"]:nth-of-type(1) div[data-testid="column"]:nth-child(1) button {
+
+    /* BOTÓN 1: AZUL */
+    .st-key-btn_0 button, .st-key-btn_0 button:disabled {
         background-color: #2d82b7 !important;
+        color: #ffffff !important;
     }
-    /* Fila 1 - Botón Verde */
-    div[data-testid="stHorizontalBlock"]:nth-of-type(1) div[data-testid="column"]:nth-child(2) button {
+
+    /* BOTÓN 2: VERDE AGUA */
+    .st-key-btn_1 button, .st-key-btn_1 button:disabled {
         background-color: #32a29b !important;
+        color: #ffffff !important;
     }
-    /* Fila 2 - Botón Amarillo */
-    div[data-testid="stHorizontalBlock"]:nth-of-type(2) div[data-testid="column"]:nth-child(1) button {
+
+    /* BOTÓN 3: AMARILLO */
+    .st-key-btn_2 button, .st-key-btn_2 button:disabled {
         background-color: #dfa634 !important;
+        color: #ffffff !important;
     }
-    /* Fila 2 - Botón Rosa */
-    div[data-testid="stHorizontalBlock"]:nth-of-type(2) div[data-testid="column"]:nth-child(2) button {
+
+    /* BOTÓN 4: ROSA */
+    .st-key-btn_3 button, .st-key-btn_3 button:disabled {
         background-color: #d8536d !important;
+        color: #ffffff !important;
     }
-    
-    .stButton > button:hover { opacity: 0.90; transform: scale(1.02); }
+
+    /* Efecto al pasar el cursor */
+    .st-key-btn_0 button:hover, .st-key-btn_1 button:hover, 
+    .st-key-btn_2 button:hover, .st-key-btn_3 button:hover {
+        opacity: 0.9 !important;
+        transform: scale(1.02) !important;
+    }
     </style>
 """, unsafe_allow_html=True)
 
-# Inicializar variables globales en la sesión
+# Inicialización de la sesión
 if "iniciado" not in st.session_state:
     st.session_state.preguntas = list(TIPOS_OPERACION.keys())
     random.shuffle(st.session_state.preguntas)
@@ -98,7 +113,7 @@ if st.session_state.indice < total_preguntas:
     st.markdown(f"<h1 style='text-align: center; font-size: 55px; color: #ffffff;'>[{codigo_actual}]</h1>", unsafe_allow_html=True)
     st.divider()
 
-    # Generar opciones solo una vez por pregunta
+    # Generar opciones (1 correcta y 3 distractores)
     if not st.session_state.respondido and len(st.session_state.opciones) == 0:
         otros = [k for k in TIPOS_OPERACION.keys() if k != codigo_actual]
         distractores = random.sample(otros, 3)
@@ -106,9 +121,9 @@ if st.session_state.indice < total_preguntas:
         random.shuffle(opts)
         st.session_state.opciones = opts
 
-    # Fila 1 de opciones (2 botones)
-    r1_c1, r1_c2 = st.columns(2)
-    with r1_c1:
+    # Fila 1 de botones
+    c1, c2 = st.columns(2)
+    with c1:
         if st.button(st.session_state.opciones[0], key="btn_0", disabled=st.session_state.respondido):
             st.session_state.respondido = True
             st.session_state.seleccion = st.session_state.opciones[0]
@@ -118,7 +133,7 @@ if st.session_state.indice < total_preguntas:
                 st.session_state.errores.append(codigo_actual)
             st.rerun()
 
-    with r1_c2:
+    with c2:
         if st.button(st.session_state.opciones[1], key="btn_1", disabled=st.session_state.respondido):
             st.session_state.respondido = True
             st.session_state.seleccion = st.session_state.opciones[1]
@@ -128,9 +143,9 @@ if st.session_state.indice < total_preguntas:
                 st.session_state.errores.append(codigo_actual)
             st.rerun()
 
-    # Fila 2 de opciones (2 botones)
-    r2_c1, r2_c2 = st.columns(2)
-    with r2_c1:
+    # Fila 2 de botones
+    c3, c4 = st.columns(2)
+    with c3:
         if st.button(st.session_state.opciones[2], key="btn_2", disabled=st.session_state.respondido):
             st.session_state.respondido = True
             st.session_state.seleccion = st.session_state.opciones[2]
@@ -140,7 +155,7 @@ if st.session_state.indice < total_preguntas:
                 st.session_state.errores.append(codigo_actual)
             st.rerun()
 
-    with r2_c2:
+    with c4:
         if st.button(st.session_state.opciones[3], key="btn_3", disabled=st.session_state.respondido):
             st.session_state.respondido = True
             st.session_state.seleccion = st.session_state.opciones[3]
@@ -185,16 +200,4 @@ else:
                 st.write(f"• **[{cod}]** {TIPOS_OPERACION[cod][0]}")
 
     with col_b:
-        st.markdown("### ❌ Respuestas Incorrectas")
-        if not st.session_state.errores:
-            st.write("¡Perfecto! Sin errores.")
-        else:
-            for cod in st.session_state.errores:
-                st.write(f"• **[{cod}]** {TIPOS_OPERACION[cod][0]}")
-
-    st.divider()
-    if st.button("↻ Reiniciar Cuestionario", type="primary"):
-        reiniciar_juego()
-        st.rerun()
-        reiniciar_juego()
-        st.rerun()
+        st.markdown("### ❌
